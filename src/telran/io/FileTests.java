@@ -23,7 +23,6 @@ class FileTests {
 	void printDirectoryContent() {
 		printDirectory("..", 2);
 	}
-
 	/**
 	 * 
 	 * @param pathName - name of path to initial directory
