@@ -9,7 +9,7 @@ class FileTests {
 	void setUp() {
 		file = new File("dir1");
 		file.delete();
-
+		new File("file1.txt").delete();
 	}
 
 	@Test
@@ -20,9 +20,8 @@ class FileTests {
 		assertTrue(file.exists());
 	}
 	@Test
-	void printDirectoryContent() throws IOException {
-		createFiles();
-		printDirectory("testFolder", -1, 1);
+	void printDirectoryContent() throws Exception {
+		printDirectory("..", -1, 1);
 	}
 	/**
 	 * 
@@ -32,12 +31,17 @@ class FileTests {
 	 *          level = 2 content + sub-directories content
 	 *          ''''''''
 	 *          level = -1 printing all levels
+	 * @throws Exception 
 	 */
-	private void printDirectory(String pathName, int level, int indent) {
+	private void printDirectory(String pathName, int level, int indent) throws Exception {
 		if(level == 0) {
 			return;
 		}
+		
 		File filePath = new File(pathName);
+		if(!filePath.exists() || !filePath.isDirectory()) {
+			throw new Exception(pathName + " is not directory");
+		}
 		File files[] = filePath.listFiles(); 
 		String fileOrFolder = "Directory";
 		for(File f: files) {
@@ -59,28 +63,25 @@ class FileTests {
 		 */
 		
 	}
-	private void createFiles() throws IOException {	
-		File[] arrayDirs = {
-				new File("testFolder"),
-				new File("testFolder/f1"),
-				new File("testFolder/f2/f5/f6"),
-				new File("testFolder/f3/f4")
-		};
-		File[] arrayFiles = {	
-				new File("testFolder/f1", "t1.txt"),
-				new File("testFolder/f2", "t2.txt"),
-				new File("testFolder/f2/f5", "t3.txt"),
-				new File("testFolder/f2/f5", "t4.txt"),
-				new File("testFolder/f2/f5/f6", "t5.txt")		
-		};
-		
-		for(File file: arrayDirs) {
-			file.mkdirs();
+	
+	@Test
+	//to write + to read
+	void printStreamTest() throws IOException {
+		try(PrintStream printStream = new PrintStream("file1.txt");
+				BufferedReader reader = new BufferedReader(new FileReader("file1.txt"));){
+			printStream.println("Hello");
+			assertEquals("Hello", reader.readLine());
 		}
-		for(File file: arrayFiles) {
-			file.createNewFile();
+	}
+	@Test
+	//to write; to read later or in another application //writing to buffer
+	void printWriterTest() throws IOException {
+		try(PrintWriter printWriter = new PrintWriter("file1.txt");
+				BufferedReader reader = new BufferedReader(new FileReader("file1.txt"));){
+			printWriter.println("Hello");
+			printWriter.flush();//reading all buffer
+			assertEquals("Hello", reader.readLine());
 		}
-
 	}
 
 
