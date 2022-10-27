@@ -1,55 +1,77 @@
 package telran.people;
+import java.io.*;
 import java.util.*;
-public class CompanyImpl implements Company {
+import java.util.stream.Collectors;
 
-	private static final long serialVersionUID = 1L;
+public class CompanyImpl implements Company {
 
 	private HashMap<Long, Employee> employees = new HashMap<>();
 	private TreeMap<Integer, List<Employee>> employeesSalary = new TreeMap<>();
 	private HashMap<String, List<Employee>> employeesDepartment = new HashMap<>();
-	//try to use streams
+	private static final long serialVersionUID = 1L;
+	
 	private CompanyImpl() {
 		
 	}
-	public static Company CreateCompany(String fileName) throws Exception{
-		//TODO
-		return null;
+	public static Company createCompany(String fileName) throws Exception {
+		//if file exists it restore Company from file, otherwise returns empty CompanyImpl object
+		CompanyImpl company = new CompanyImpl();	
+		if(new File(fileName).exists()) {
+			try(ObjectInputStream input = new ObjectInputStream(
+					new FileInputStream(fileName))){
+				company = (CompanyImpl) input.readObject();
+			}
+		} 
+		return company;
 	}
+
 	@Override
 	public Iterable<Employee> getAllEmployees() {
-		// TODO 
-		//if file exists it restore Company from file, otherWise returns empty CompanyImpl object
-		return null;
+		
+		return new ArrayList<Employee>(employees.values());
 	}
+
 
 	@Override
 	public void addEmployee(Employee empl) throws Exception {
-		// TODO 
-
+		if(employees.putIfAbsent(empl.getId(), empl) != null) {
+			throw new Exception("Employee already exist");
+		}
+		employees.put(empl.getId(), empl);
+		employeesSalary.computeIfAbsent(empl.getSalary(), k -> new ArrayList<Employee>()).add(empl);
+		employeesDepartment.computeIfAbsent(empl.getDepartment(), k -> new ArrayList<Employee>()).add(empl);
 	}
 
 	@Override
 	public void save(String filePath) throws Exception {
-		// TODO 
-
+		try(ObjectOutputStream output = new ObjectOutputStream(
+				new FileOutputStream(filePath))){
+			output.writeObject(this);
+		}
 	}
 
 	@Override
 	public Iterable<Employee> getEmployeesDepartment(String department) {
-		// TODO 
-		return null;
+	
+		return new ArrayList<Employee>(employeesDepartment.get(department));
 	}
 
 	@Override
 	public Iterable<Employee> getEmployeesSalary(int salaryFrom, int salaryTo) {
-		// TODO 
-		return null;
+		
+		return employeesSalary.subMap(salaryFrom, salaryTo)
+		.entrySet()
+		.stream().flatMap(x -> x.getValue().stream())
+		.collect(Collectors.toList());
 	}
 
 	@Override
 	public Employee getEmployee(long id) {
-		// TODO 
-		return null;
+		
+		return employees.get(id);
 	}
+	
+
+			
 
 }

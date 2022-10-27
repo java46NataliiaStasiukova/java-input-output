@@ -30,5 +30,9 @@ public class Employee implements Serializable{
 	public int getSalary() {
 		return salary;
 	}
+	public String toString() {
+		//TODO
+		return null;
+	}
 	
 }
