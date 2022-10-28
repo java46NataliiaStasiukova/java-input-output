@@ -17,35 +17,38 @@ public class Logger {
 		this.level = level;
 	}
 	public void error(String message) {
-		if (level.compareTo(Level.ERROR) <= 0) {
-			LoggerRecord loggerRecord = new LoggerRecord(Instant.now(), "Asia/Jerusalem", Level.ERROR, name, message);
-			handler.publish(loggerRecord);
-		}
+	if (level.compareTo(Level.ERROR) <= 0) {
+		LoggerRecord loggerRecord = createLoggerRecord(Level.ERROR, message);
+		handler.publish(loggerRecord);
+	}
 	}
 	public void warn(String message) {
 	if (level.compareTo(Level.WARN) <= 0) {
-		LoggerRecord loggerRecord = new LoggerRecord(Instant.now(), "Asia/Jerusalem", Level.WARN, name, message);
+		LoggerRecord loggerRecord = createLoggerRecord(Level.WARN, message);
 		handler.publish(loggerRecord);
 		}
 	}
 	public void info(String message) {
 	if (level.compareTo(Level.INFO) <= 0) {
-		LoggerRecord loggerRecord = new LoggerRecord(Instant.now(), "Asia/Jerusalem", Level.INFO, name, message);
+		LoggerRecord loggerRecord = createLoggerRecord(Level.INFO, message);
 		handler.publish(loggerRecord);
 		}
 	}
 	public void debug(String message) {
 	if (level.compareTo(Level.DEBUG) <= 0) {
-		LoggerRecord loggerRecord = new LoggerRecord(Instant.now(), "Asia/Jerusalem", Level.DEBUG, name, message);
+		LoggerRecord loggerRecord = createLoggerRecord(Level.DEBUG, message);
 		handler.publish(loggerRecord);
 		}
 	}
 	public void trace(String message) {
 	if (level.compareTo(Level.TRACE) == 0) {
-		LoggerRecord loggerRecord = new LoggerRecord(Instant.now(), "Asia/Jerusalem", Level.TRACE, name, message);
+		LoggerRecord loggerRecord = createLoggerRecord(Level.TRACE, message);
 		handler.publish(loggerRecord);
 		}
+	}
+	private LoggerRecord createLoggerRecord(Level level, String message) {
 		
+		return new LoggerRecord(Instant.now(), "Asia/Jerusalem", level, name, message);
 	}
 	
 	
