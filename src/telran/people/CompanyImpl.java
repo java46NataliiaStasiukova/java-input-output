@@ -14,7 +14,6 @@ public class CompanyImpl implements Company {
 		
 	}
 	public static Company createCompany(String fileName) throws Exception {
-		//if file exists it restore Company from file, otherwise returns empty CompanyImpl object
 		CompanyImpl company = new CompanyImpl();	
 		if(new File(fileName).exists()) {
 			try(ObjectInputStream input = new ObjectInputStream(
@@ -28,9 +27,8 @@ public class CompanyImpl implements Company {
 	@Override
 	public Iterable<Employee> getAllEmployees() {
 		
-		return new ArrayList<Employee>(employees.values());
+		return employees.values();
 	}
-
 
 	@Override
 	public void addEmployee(Employee empl) throws Exception {
@@ -53,13 +51,13 @@ public class CompanyImpl implements Company {
 	@Override
 	public Iterable<Employee> getEmployeesDepartment(String department) {
 	
-		return new ArrayList<Employee>(employeesDepartment.get(department));
+		return employeesDepartment.getOrDefault(department, Collections.emptyList());
 	}
 
 	@Override
 	public Iterable<Employee> getEmployeesSalary(int salaryFrom, int salaryTo) {
 		
-		return employeesSalary.subMap(salaryFrom, salaryTo)
+		return employeesSalary.subMap(salaryFrom, true, salaryTo, true)
 		.entrySet()
 		.stream().flatMap(x -> x.getValue().stream())
 		.collect(Collectors.toList());
